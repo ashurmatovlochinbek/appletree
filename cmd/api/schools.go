@@ -1,8 +1,10 @@
 package main
 
 import (
+	"appletree/internal/data"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 // createSchoolHandler for the "POST /v1/schools endpoint"
@@ -18,5 +20,28 @@ func (app *application) showSchoolHandler(w http.ResponseWriter, r *http.Request
 		http.NotFound(w, r)
 		return
 	}
-	fmt.Fprintf(w, "show the details for school %d\n", id)
+
+	school := data.School{
+		ID: id,
+		CreatedAt: time.Now(),
+		Name: "Apple Tree",
+		Level: "High School",
+		Contact: "Anna Smith",
+		Phone: "601-4411",
+		Address: "14 Apple street",
+		Mode: []string{"blended", "online"},
+		Version: 1,
+	}
+
+	err = app.writeJSON(w, http.StatusOK, school, nil)
+	if err != nil {
+		app.logger.Panicln(err)
+		http.Error(w, "The server encounterd a problem and could not process your request", http.StatusInternalServerError)
+		return
+	}
+
+	
+
+
 }
+
